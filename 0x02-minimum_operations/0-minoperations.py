@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-
+"""Minimum Operations"""
 
 def minOperations(n):
     """
@@ -13,21 +13,16 @@ def minOperations(n):
         The minimum number of operations needed, or 0 if impossible.
     """
 
-    # Create a table to store minimum operations
-    # for reaching different character counts
-    dp = [float('inf')] * (n + 1)
-
-    # Base case: 0 characters requires no operations
-    dp[0] = 0
-
-    # Iterate through possible character counts (1 to n)
-    for i in range(1, n + 1):
-        # Check if copying and pasting a smaller count is beneficial
-        for j in range(1, i):
-            # Ensure j divides i perfectly (pasting a non-multiple won't work)
-            if i % j == 0:
-                # Update dp[i] if the current option is less
-                dp[i] = min(dp[i], dp[j] + 2)
-
-    # Return the minimum operations for reaching n characters
-    return dp[n] if dp[n] != float('inf') else 0
+    if not isinstance(n, int):
+        return 0
+    ops_count = 0
+    clipboard = 0
+    while n > 1:
+        if n % 2 == 0:
+            n //= 2
+            ops_count += 1
+        else:
+            clipboard = n
+            n -= clipboard
+            ops_count += 2
+    return ops_count
