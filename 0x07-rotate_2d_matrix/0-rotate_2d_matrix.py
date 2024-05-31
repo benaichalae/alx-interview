@@ -2,23 +2,21 @@
 """Rotate 2D Matrix"""
 
 
-def rotate_matrix(matrix):
-    """
-    Rotates an n x n 2D matrix in place by 90 degrees clockwise.
-    """
-    n = len(matrix)
-    # Loop through layers
-    for layer in range(n // 2):
-        # Define first, last elements for current layer
-        first = layer
-        last = n - layer - 1
+def rotate_2d_matrix(matrix):
+    if not isinstance(matrix, list) or not matrix:
+        return
 
-    # Loop through elements in the current layer
-    for i in range(first, last):
-        # Swap elements in a circular fashion
-        offset = i - first
-        temp = matrix[first][i]
-        matrix[first][i] = matrix[last - offset][first]
-        matrix[last - offset][first] = matrix[last][last - offset]
-        matrix[last][last - offset] = matrix[i][last]
-        matrix[i][last] = temp
+    rows = len(matrix)
+    cols = len(matrix[0])
+
+    if not all(isinstance(row, list) and len(row) == cols for row in matrix):
+        return
+
+    rotated_matrix = [[0] * rows for _ in range(cols)]
+
+    for i in range(rows):
+        for j in range(cols):
+            rotated_matrix[j][rows - i - 1] = matrix[i][j]
+
+    matrix.clear()
+    matrix.extend(rotated_matrix)
