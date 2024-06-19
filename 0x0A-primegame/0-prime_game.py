@@ -2,7 +2,7 @@
 """Module for Prime Game"""
 
 
-def is_winner(x, nums):
+def isWinner(x, nums):
     """
     Determines the winner of a series of prime number games.
 
