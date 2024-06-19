@@ -2,52 +2,58 @@
 """Module for Prime Game"""
 
 
-def isWinner(x, nums):
-    # Check for invalid input conditions
+def is_winner(x, nums):
+    """
+    Determines the winner of a series of prime number games.
+
+    Args:
+        x (int): The number of rounds to be played.
+        nums (list of int): A list of integers,
+        each representing the range of numbers to be used in a round.
+
+    Returns:
+        str: The name of the player who won the most rounds ("Ben" or "Maria").
+        None: If no clear winner can be determined.
+    """
     if x <= 0 or not nums or x != len(nums):
         return None
 
-    # Helper function to generate prime numbers
-    # up to n using Sieve of Eratosthenes
-    def sieve_of_eratosthenes(n):
-        # Initialize a list to mark prime numbers
-        is_prime = [True] * (n + 1)
-        p = 2
-        # Mark non-primes starting from 2 up to sqrt(n)
-        while p * p <= n:
-            if is_prime[p]:
-                for i in range(p * p, n + 1, p):
-                    is_prime[i] = False
-            p += 1
-        # 0 and 1 are not prime numbers
-        is_prime[0] = is_prime[1] = False
-        return is_prime
-
-    # Find the maximum number in nums
-    # to determine the range for prime calculation
+    ben_wins, maria_wins = 0, 0
     max_num = max(nums)
-    # Generate a list of prime numbers using the helper function
     primes = sieve_of_eratosthenes(max_num)
 
-    # Initialize counters for Ben and Maria's wins
-    ben = 0
-    maria = 0
-
-    # Iterate over each round in nums
     for n in nums:
-        # Calculate the sum of prime numbers up to n
         if sum(primes[:n + 1]) % 2 == 0:
-            # If the sum is even, Ben wins the round
-            ben += 1
+            ben_wins += 1
         else:
-            # Otherwise, Maria wins the round
-            maria += 1
+            maria_wins += 1
 
-    # Determine the winner based on who won more rounds
-    if ben > maria:
+    if ben_wins > maria_wins:
         return "Ben"
-    elif maria > ben:
+    elif maria_wins > ben_wins:
         return "Maria"
     else:
-        # If Ben and Maria won the same number of rounds, return None
         return None
+
+
+def sieve_of_eratosthenes(limit):
+    """
+    Generates a list of prime indicators up to
+    a specified limit using the Sieve of Eratosthenes algorithm.
+
+    Args:
+        limit (int): The upper limit for generating prime indicators.
+
+    Returns:
+        list of int: A list where indices represent numbers
+        and values indicate primality (1 for prime, 0 for non-prime).
+    """
+    primes = [1] * (limit + 1)
+    primes[0], primes[1] = 0, 0
+
+    for i in range(2, int(limit ** 0.5) + 1):
+        if primes[i]:
+            for j in range(i * i, limit + 1, i):
+                primes[j] = 0
+
+    return primes
