@@ -1,29 +1,26 @@
 #!/usr/bin/node
 
-const axios = require('axios');
-const filmId = process.argv[2];
-const url = `https://swapi-api.hbtn.io/api/films/${filmId}`;
+const request = require('request');
+const API_URL = 'https://swapi-api.hbtn.io/api';
 
-const fetchCharacterName = async (characterUrl) => {
-  try {
-    const response = await axios.get(characterUrl);
-    console.log(response.data.name);
-  } catch (error) {
-    console.error(`Error fetching character data: ${error.message}`);
-  }
-};
-
-const fetchFilmCharacters = async () => {
-  try {
-    const response = await axios.get(url);
-    const characterUrls = response.data.characters;
-
-    for (const characterUrl of characterUrls) {
-      await fetchCharacterName(characterUrl);
+if (process.argv.length > 2) {
+  request(`${API_URL}/films/${process.argv[2]}/`, (err, _, body) => {
+    if (err) {
+      console.log(err);
     }
-  } catch (error) {
-    console.error(`Error fetching film data: ${error.message}`);
-  }
-};
+    const charactersURL = JSON.parse(body).characters;
+    const charactersName = charactersURL.map(
+      url => new Promise((resolve, reject) => {
+        request(url, (promiseErr, __, charactersReqBody) => {
+          if (promiseErr) {
+            reject(promiseErr);
+          }
+          resolve(JSON.parse(charactersReqBody).name);
+        });
+      }));
 
-fetchFilmCharacters();
+    Promise.all(charactersName)
+      .then(names => console.log(names.join('\n')))
+      .catch(allErr => console.log(allErr));
+  });
+}
